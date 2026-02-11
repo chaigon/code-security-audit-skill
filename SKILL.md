@@ -12,7 +12,65 @@ description: >
 
 # 代码安全审计
 
-对项目执行深度安全审计，基于 Source→Propagation→Sink 数据流分析模型，覆盖依赖漏洞 + 代码漏洞 + 业务逻辑 + 攻击链 + 配置安全。
+对项目执行安全审计，支持三种审计模式以平衡深度与 token 消耗。
+
+## 审计模式选择
+
+触发时先确定审计模式。用户明确指定则使用指定模式，否则默认 **中度**。
+
+| 触发关键词 | 模式 |
+|-----------|------|
+| "快速扫描"、"quick scan"、"轻度审计"、"light" | 轻度 |
+| "安全审计"、"代码审计"、"audit"（默认） | 中度 |
+| "深度审计"、"full audit"、"deep"、"渗透测试级" | 深度 |
+
+### 轻度审计（Quick Scan）
+
+目标：快速发现高危问题，最小 token 消耗。
+
+| 阶段 | 执行内容 |
+|------|---------|
+| Phase 1 | 仅识别语言/框架，不画模块地图和攻击面清单 |
+| Phase 2 | 单 Agent，仅搜索 Critical/High 级别模式（每语言 Top 10 高危模式） |
+| Phase 3 | 跳过 |
+| Phase 4 | 跳过攻击链，仅基本验证（排除明显误报） |
+| Phase 5 | 终端简要输出，不生成报告文件 |
+
+不执行多轮审计。不加载 references 文件（使用内置知识）。依赖审计仅运行工具扫描，不做 Claude 分析。
+
+**轻度模式 Top 10 高危模式**（跨语言通用）：
+1. `eval(`/`exec(`/`Runtime.exec`/`os.system` — 代码/命令执行
+2. `pickle.loads`/`ObjectInputStream`/`yaml.load` — 不安全反序列化
+3. SQL 字符串拼接（`"SELECT.*" + `/`Statement`/`${}` in Mybatis）
+4. 硬编码密码/密钥（`password\s*=\s*["']`/`secret`/`api_key`）
+5. `shell=True`/`child_process.exec` — 命令注入
+6. `dangerouslySetInnerHTML`/`innerHTML`/`v-html` — XSS
+7. `verify=False`/`InsecureSkipVerify` — TLS 绕过
+8. `DEBUG\s*=\s*True`/`NODE_ENV.*development` — 生产环境调试模式
+9. `cors.*origin.*\*` — CORS 全开
+10. `log4j`/`fastjson` 已知高危版本
+
+### 中度审计（Standard Audit）
+
+目标：覆盖主要安全风险，合理 token 消耗。
+
+| 阶段 | 执行内容 |
+|------|---------|
+| Phase 1 | 完整信息收集 + 依赖审计（工具 + Claude 分析） |
+| Phase 2 | 2-3 个 Agent 并行扫描，覆盖所有 Critical/High/Medium 模式 |
+| Phase 3 | 仅审计 P0 文件（认证链 + 未认证端点 + 核心 Sink 聚合点） |
+| Phase 4 | 基本验证（四步法），不构建攻击链 |
+| Phase 5 | 完整报告（无攻击链章节） |
+
+单轮审计。按需加载 vulnerability_rules.md 中对应语言章节。
+
+### 深度审计（Full Audit）
+
+目标：最大化发现率，适合安全评审和渗透测试前审查。
+
+执行完整五阶段流程 + 多轮审计策略 + 攻击链构建。即下文描述的全部内容。
+
+---
 
 ## 审计哲学
 
