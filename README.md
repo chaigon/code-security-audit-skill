@@ -54,7 +54,8 @@ cp -r code-security-audit-skill ~/.claude/skills/code-security-audit
 对 [OWASP Juice Shop](https://github.com/juice-shop/juice-shop) v19.1.1 执行深度审计的完整结果：
 
 - 📄 [Juice Shop 审计报告](references/examples/juice-shop-audit.md)
-- 发现 **42 个漏洞**（8 Critical / 18 High / 12 Medium / 4 Low）
+- 📊 [白盒 vs 黑盒对比](references/examples/juice-shop-comparison.md) — 与 Shannon 自动化渗透工具结果对比
+- 发现 **42 个漏洞**（8 Critical / 18 High / 12 Medium / 4 Low），比黑盒工具多发现 **90%**
 - 构建 **6 条攻击链**，最严重的从未认证 SQL 注入到 RCE 全链路
 - 覆盖：注入、认证授权、IDOR、XSS、SSRF、文件操作、业务逻辑、配置安全
 
@@ -79,7 +80,8 @@ code-security-audit/
     ├── vulnerability_rules.md       # 漏洞规则库（含攻击链模式）
     ├── report_template.md           # 报告模板（含攻击链章节）
     └── examples/
-        └── juice-shop-audit.md      # Juice Shop 审计示例报告
+        ├── juice-shop-audit.md      # Juice Shop 审计示例报告
+        └── juice-shop-comparison.md # 白盒 vs 黑盒对比分析
 ```
 
 ---
@@ -134,7 +136,8 @@ do a deep security audit             # Deep
 Full deep audit results on [OWASP Juice Shop](https://github.com/juice-shop/juice-shop) v19.1.1:
 
 - 📄 [Juice Shop Audit Report](references/examples/juice-shop-audit.md)
-- Found **42 vulnerabilities** (8 Critical / 18 High / 12 Medium / 4 Low)
+- 📊 [White-box vs Black-box Comparison](references/examples/juice-shop-comparison.md) — compared with Shannon automated pentest tool
+- Found **42 vulnerabilities** (8 Critical / 18 High / 12 Medium / 4 Low), **90% more** than black-box tools
 - Constructed **6 attack chains**, the most severe being unauthenticated SQL injection to RCE
 - Coverage: injection, auth/authz, IDOR, XSS, SSRF, file ops, business logic, configuration
 
@@ -159,7 +162,8 @@ code-security-audit/
     ├── vulnerability_rules.md       # Vulnerability rules (incl. attack chain patterns)
     ├── report_template.md           # Report template (incl. attack chain section)
     └── examples/
-        └── juice-shop-audit.md      # Juice Shop audit example report
+        ├── juice-shop-audit.md      # Juice Shop audit example report
+        └── juice-shop-comparison.md # White-box vs black-box comparison
 ```
 
 ---
