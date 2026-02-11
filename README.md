@@ -49,6 +49,24 @@ cp -r code-security-audit-skill ~/.claude/skills/code-security-audit
 | Go | Gin, Echo | go.mod | govulncheck |
 | Java | Spring, Mybatis | pom.xml, build.gradle | OWASP dependency-check |
 
+### 审计示例
+
+对 [OWASP Juice Shop](https://github.com/juice-shop/juice-shop) v19.1.1 执行深度审计的完整结果：
+
+- 📄 [Juice Shop 审计报告](references/examples/juice-shop-audit.md)
+- 发现 **42 个漏洞**（8 Critical / 18 High / 12 Medium / 4 Low）
+- 构建 **6 条攻击链**，最严重的从未认证 SQL 注入到 RCE 全链路
+- 覆盖：注入、认证授权、IDOR、XSS、SSRF、文件操作、业务逻辑、配置安全
+
+审计过程使用 4 个并行 Agent，按攻击面划分非重叠搜索模式：
+
+| Agent | 职责 | 发现数 |
+|-------|------|--------|
+| Agent 1 | SQL/NoSQL/命令注入/代码执行/XXE | 10 |
+| Agent 2 | JWT/密码/Session/IDOR/越权 | 16 |
+| Agent 3 | 文件遍历/SSRF/重定向/XSS | 17 |
+| Agent 4 | 业务逻辑/CAPTCHA/速率限制/配置 | 19 |
+
 ### 目录结构
 
 ```
@@ -59,7 +77,9 @@ code-security-audit/
 │   └── dep_audit_java.sh            # Java 依赖扫描
 └── references/
     ├── vulnerability_rules.md       # 漏洞规则库（含攻击链模式）
-    └── report_template.md           # 报告模板（含攻击链章节）
+    ├── report_template.md           # 报告模板（含攻击链章节）
+    └── examples/
+        └── juice-shop-audit.md      # Juice Shop 审计示例报告
 ```
 
 ---
@@ -109,6 +129,24 @@ do a deep security audit             # Deep
 | Go | Gin, Echo | go.mod | govulncheck |
 | Java | Spring, Mybatis | pom.xml, build.gradle | OWASP dependency-check |
 
+### Audit Example
+
+Full deep audit results on [OWASP Juice Shop](https://github.com/juice-shop/juice-shop) v19.1.1:
+
+- 📄 [Juice Shop Audit Report](references/examples/juice-shop-audit.md)
+- Found **42 vulnerabilities** (8 Critical / 18 High / 12 Medium / 4 Low)
+- Constructed **6 attack chains**, the most severe being unauthenticated SQL injection to RCE
+- Coverage: injection, auth/authz, IDOR, XSS, SSRF, file ops, business logic, configuration
+
+The audit used 4 parallel agents with non-overlapping search patterns by attack surface:
+
+| Agent | Responsibility | Findings |
+|-------|---------------|----------|
+| Agent 1 | SQL/NoSQL/command injection/code exec/XXE | 10 |
+| Agent 2 | JWT/password/session/IDOR/privilege | 16 |
+| Agent 3 | File traversal/SSRF/redirect/XSS | 17 |
+| Agent 4 | Business logic/CAPTCHA/rate limit/config | 19 |
+
 ### Project Structure
 
 ```
@@ -119,7 +157,9 @@ code-security-audit/
 │   └── dep_audit_java.sh            # Java dependency scan
 └── references/
     ├── vulnerability_rules.md       # Vulnerability rules (incl. attack chain patterns)
-    └── report_template.md           # Report template (incl. attack chain section)
+    ├── report_template.md           # Report template (incl. attack chain section)
+    └── examples/
+        └── juice-shop-audit.md      # Juice Shop audit example report
 ```
 
 ---
